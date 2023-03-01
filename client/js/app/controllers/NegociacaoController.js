@@ -6,10 +6,9 @@ class NegociacaoController {
         this._inputQuantidade = $('#quantidade');
         this._inputValor = $('#valor');
         
-        this._listaNegociacoes = new ListaNegociacoes(function(model) { //passa a função que será executada QUANDO a lista de negociações for alterada
-            this._negociacoesView.update(model);//passa a lista de negociações para a view
-        });
-
+        //Passa a função que será executada QUANDO a lista de negociações for alterada
+        this._listaNegociacoes = new ListaNegociacoes(model => this._negociacoesView.update(model));//passa a lista de negociações para a view
+    
         this._negociacoesView = new NegociacoesView($('#negociacoesView'));
         this._negociacoesView.update(this._listaNegociacoes);
         
