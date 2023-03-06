@@ -16,5 +16,9 @@ class ListaNegociacoes {
     get negociacoes() {
         return [].concat(this._negociacoes); //programação defensiva - cria uma cópia do array
     }
+
+    get volumeTotal() {
+        return this._negociacoes.reduce((total, n) => total + n.volume, 0.0);
+     }
    
 }
