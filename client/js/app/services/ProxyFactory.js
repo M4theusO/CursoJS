@@ -5,22 +5,25 @@ class ProxyFactory {
         return new Proxy(objeto, {
 
             get(target, prop, receiver) {
+                
                 if(props.includes(prop) && ProxyFactory._ehFuncao(target[prop])) {
                     return function() {
                         console.log(`Interceptando ${prop}`);
-                        Reflect.apply(target[prop], target, arguments);
-                        return acao(target);
+                        let retorno = Reflect.apply(target[prop], target, arguments);
+                        acao(target);
+                        return retorno;
                     }
                 }
                 return Reflect.get(target, prop, receiver);
             },
 
             set(target, prop, value, receiver) {
+
+                let retorno = Reflect.set(target, prop, value, receiver);
                 if(props.includes(prop)) {
-                    target[prop] = value;
                     acao(target);
                 }
-                return Reflect.set(target, prop, value, receiver);
+                return retorno;
             }
         });
     }
