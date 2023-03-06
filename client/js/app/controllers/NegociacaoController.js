@@ -5,9 +5,25 @@ class NegociacaoController {
         this._inputData = $('#data');
         this._inputQuantidade = $('#quantidade');
         this._inputValor = $('#valor');
+
+        let self = this;
+        this._listaNegociacoes  = new Proxy(new ListaNegociacoes(), {
+
+            get(target, prop, receiver) {
+                if(['adiciona', 'esvazia'].includes(prop) && typeof(target[prop]) == typeof(Function)) {
+                    return function() {
+                        console.log(`Interceptando ${prop}`);
+                        Reflect.apply(target[prop], target, arguments);
+                        self._negociacoesView.update(target);
+                    }
+                }
+                return Reflect.get(target, prop, receiver);
+            }
+        });
         
         //Passa a função que será executada QUANDO a lista de negociações for alterada
-        this._listaNegociacoes = new ListaNegociacoes(model => this._negociacoesView.update(model));//passa a lista de negociações para a view
+        //this._listaNegociacoes = new ListaNegociacoes(model => this._negociacoesView.update(model));
+        //passa a lista de negociações para a view
     
         this._negociacoesView = new NegociacoesView($('#negociacoesView'));
         this._negociacoesView.update(this._listaNegociacoes);
