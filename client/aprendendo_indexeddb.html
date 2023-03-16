@@ -10,13 +10,18 @@
 
         var connection;
 
-        var openRequest = window.indexedDB.open('aluraframe', 2);
+        var openRequest = window.indexedDB.open('aluraframe', 3);
 
         openRequest.onupgradeneeded = e => {
             console.log('Cria ou altera um banco já existente');
 
             let minhaConnection = e.target.result;
-            minhaConnection.createObjectStore('negociacoes')
+
+            if(minhaConnection.objectStoreNames.contains('negociacoes')) {
+                minhaConnection.deleteObjectStore('negociacoes');
+            }
+
+            minhaConnection.createObjectStore('negociacoes', { autoIncrement: true })
         };
 
         openRequest.onsuccess = e => {
@@ -48,8 +53,6 @@
 
         }
         
-        adiciona();
-
     </script>
     
 </body>
