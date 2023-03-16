@@ -11,7 +11,6 @@ var ConnectionFactory = (function () {
     return class ConnectionFactory {
 
         constructor() {
-
             throw new Error('Não é possível criar instâncias de ConnectionFactory');
         }
 
@@ -22,7 +21,6 @@ var ConnectionFactory = (function () {
                 let openRequest = window.indexedDB.open(dbName, version);
 
                 openRequest.onupgradeneeded = e => {
-
                     ConnectionFactory._createStores(e.target.result);
                 };
 
@@ -38,7 +36,6 @@ var ConnectionFactory = (function () {
                 };
 
                 openRequest.onerror = e => {
-                    
                     console.log(e.target.error);
                     reject(e.target.error.name);
                 };
@@ -48,13 +45,12 @@ var ConnectionFactory = (function () {
         static _createStores(connection) {
 
             stores.forEach(store => {
-
                 if (connection.objectStoreNames.contains(store)) connection.deleteObjectStore(store);
                 connection.createObjectStore(store, { autoIncrement: true });
             });
         }
 
-        static closeConnection() {
+        static closeConnection() {           
             
             if(connection) {
                 close();
