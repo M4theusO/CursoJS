@@ -1,24 +1,30 @@
 class NegociacaoController {
-
+    
     constructor() {
-        let $ = document.querySelector.bind(document); //bind - para pegar o contexto do document
+        
+        let $ = document.querySelector.bind(document);
+        
         this._inputData = $('#data');
         this._inputQuantidade = $('#quantidade');
         this._inputValor = $('#valor');
-        this._ordemAtual = ''; // quando a página for carregada, não tem critério. Só passa a ter quando ele começa a clicar nas colunas
-        
+         
         this._listaNegociacoes = new Bind(
-            new ListaNegociacoes(),
-            new NegociacoesView($('#negociacoesView')),
-            'adiciona', 'esvazia', 'ordena', 'inverteOrdem'
-        );
-               
+            new ListaNegociacoes(), 
+            new NegociacoesView($('#negociacoesView')), 
+            'adiciona', 'esvazia' , 'ordena', 'inverteOrdem');
+       
         this._mensagem = new Bind(
-            new Mensagem(),
-            new MensagemView($('#mensagemView')),
-            'texto'
-        );
+            new Mensagem(), new MensagemView($('#mensagemView')),
+            'texto');    
+            
+        this._ordemAtual = '';
 
+        this._init();
+                    
+    }
+
+    _init() {
+        
         ConnectionFactory
             .getConnection()
             .then(connection => new NegociacaoDao(connection))
@@ -29,48 +35,53 @@ class NegociacaoController {
             .catch(erro => {
                 console.log(erro);
                 this._mensagem.texto = erro;
-            });      
-            
+            });
+
+        setInterval(() => {
+            this.importaNegociacoes();
+        }, 3000);
     }
-
+    
     adiciona(event) {
-
-        event.preventDefault(); //não deixa o formulário ser submetido
+        
+        event.preventDefault();
 
         ConnectionFactory
             .getConnection()
             .then(connection => {
+                
                 let negociacao = this._criaNegociacao();
 
                 new NegociacaoDao(connection)
                     .adiciona(negociacao)
                     .then(() => {
                         this._listaNegociacoes.adiciona(negociacao);
-                        this._mensagem.texto = 'Negociação adicionada com sucesso';
-                        this._limpaFormulario();
+                        this._mensagem.texto = 'Negociação adicionada com sucesso'; 
+                        this._limpaFormulario();                         
                     })
             })
-            .catch(erro => this._mensagem.texto = erro); 
+            .catch(erro => this._mensagem.texto = erro);
     }
-
+    
     importaNegociacoes() {
 
         let service = new NegociacaoService();
         service
-        .obterNegociacoes()
-        .then(negociacoes => 
-            negociacoes.filter(negociacao => 
-                this._listaNegociacoes.negociacoes.indexOf(negociacao) == -1)
-        )
-        .then(negociacoes => negociacoes.forEach(negociacao => {
-            this._listaNegociacoes.adiciona(negociacao);
-            this._mensagem.texto = 'Negociações do período importadas com sucesso';
-        }))
-        .catch(error => this._mensagem.texto = error);
+            .obterNegociacoes()
+            .then(negociacoes => 
+                negociacoes.filter(negociacao => 
+                    !this._listaNegociacoes.negociacoes.some(negociacaoExistente =>
+                        JSON.stringify(negociacao) == JSON.stringify(negociacaoExistente)))    
+            )
+            .then(negociacoes => negociacoes.forEach(negociacao => {
+                this._listaNegociacoes.adiciona(negociacao);
+                this._mensagem.texto = 'Negociações do período importadas'   
+            }))
+            .catch(erro => this._mensagem.texto = erro);                              
     }
-
+    
     apaga() {
-
+        
         ConnectionFactory
             .getConnection()
             .then(connection => new NegociacaoDao(connection))
@@ -80,28 +91,30 @@ class NegociacaoController {
                 this._listaNegociacoes.esvazia();
             });
     }
-
+    
     _criaNegociacao() {
+        
         return new Negociacao(
             DateHelper.textoParaData(this._inputData.value),
             parseInt(this._inputQuantidade.value),
-            parseFloat(this._inputValor.value));
+            parseFloat(this._inputValor.value));    
     }
-
+    
     _limpaFormulario() {
+     
         this._inputData.value = '';
         this._inputQuantidade.value = 1;
         this._inputValor.value = 0.0;
-        this._inputData.focus();
+        this._inputData.focus();   
     }
-
+    
     ordena(coluna) {
-        if(this._ordemAtual == coluna){
-            //inverte a ordem da lista
-            this._listaNegociacoes.inverteOrdem();
+        
+        if(this._ordemAtual == coluna) {
+            this._listaNegociacoes.inverteOrdem(); 
         } else {
-            this._listaNegociacoes.ordena((a, b) => a[coluna] - b[coluna]);
+            this._listaNegociacoes.ordena((p, s) => p[coluna] - s[coluna]);    
         }
-        this._ordemAtual = coluna;
+        this._ordemAtual = coluna;    
     }
 }

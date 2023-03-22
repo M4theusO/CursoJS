@@ -5,14 +5,13 @@
     <title>Negociações</title>
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/bootstrap-theme.css">
-    
-    <!-- carregando polyfill -->
     <script src="js/app/polyfill/es6.js"></script>
     
 </head>
 <body class="container">
     
     <h1 class="text-center">Negociações</h1>
+    
     <div id="mensagemView"></div>
     
     <form class="form" onsubmit="negociacaoController.adiciona(event)">
@@ -36,9 +35,6 @@
     </form>
     
     <div class="text-center">
-        <button onclick="negociacaoController.importaNegociacoes()" class="btn btn-primary text-center" type="button">
-            Importar Negociações
-        </button>
         <button onclick="negociacaoController.apaga()" class="btn btn-primary text-center" type="button">
             Apagar
         </button>
@@ -54,7 +50,7 @@
     <script src="js/app/models/ListaNegociacoes.js"></script>
     <script src="js/app/views/View.js"></script>
     <script src="js/app/views/NegociacoesView.js"></script>
-    <script src='js/app/models/Mensagem.js'></script>
+    <script src="js/app/models/Mensagem.js"></script>
     <script src="js/app/views/MensagemView.js"></script>
     <script src="js/app/services/ProxyFactory.js"></script>
     <script src="js/app/helpers/Bind.js"></script>
@@ -65,5 +61,6 @@
     <script>
         var negociacaoController = new NegociacaoController();
     </script>
+    
 </body>
 </html>

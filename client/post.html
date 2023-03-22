@@ -30,19 +30,16 @@
 
     <script src="js/app/services/HttpService.js"></script>
     <script>
-
         function sendPost(event) {
 
             event.preventDefault();
+
             console.log("Enviando post");
 
-            //ler os dados do formulário
-            //construir o json
-            //enviar o XMLHttpRequest
-            let $ = document.querySelector.bind(document); //bind - para pegar o contexto do document
-            let inputData = $('#data');
-            let inputQuantidade = $('#quantidade');
-            let inputValor = $('#valor');
+            let $ = document.querySelector.bind(document);
+            inputData = $('#data');
+            inputQuantidade = $('#quantidade');
+            inputValor = $('#valor');
 
             let negociacao = {
                 data: inputData.value,
@@ -50,6 +47,7 @@
                 valor: inputValor.value
             };
 
+            // usando nosso serviço. Veja que nem guardei em uma variável 
             new HttpService()
                 .post('/negociacoes', negociacao)
                 .then(() => {
